@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+        --primary: #ff4757;
+        --secondary: #5352ed;
+        --accent: #ffa502;
+        --dark: #2f3542;
+        --light: #f1f2f6;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, var(--dark) 0%, #1e272e 100%);
+        color: var(--light);
+        min-height: 100vh;
+    }
+    
+    .navbar {
+        background: rgba(47, 53, 66, 0.8) !important;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .navbar-brand {
+        font-family: 'Bungee', cursive;
+        font-size: 1.8rem;
+        color: white !important;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .nav-link {
+        color: rgba(255, 255, 255, 0.8) !important;
+        font-weight: 500;
+        margin: 0 0.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+        color: white !important;
+        transform: translateY(-2px);
+    }
+    
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+    
+    .container {
+        padding: 2rem;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        margin-bottom: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(255, 165, 2, 0.2);
+        border-color: var(--accent);
+    }
+    
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    
+    .card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        color: var(--light);
+    }
+    
+    .card-title {
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-text {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 1rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(83, 82, 237, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(83, 82, 237, 0.4);
+    }
+    
+    .btn-success {
+        background: linear-gradient(45deg, var(--secondary), #1dd1a1);
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(29, 209, 161, 0.3);
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(29, 209, 161, 0.4);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(45deg, var(--primary), #ff6b81);
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 107, 129, 0.3);
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 107, 129, 0.4);
+    }
+    
+    .btn-warning {
+        background: linear-gradient(45deg, var(--accent), #ff9f43);
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 159, 67, 0.3);
+    }
+    
+    .btn-warning:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 159, 67, 0.4);
+    }
+    
+    .login-container, .register-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dashboard-header {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dashboard-header h2 {
+        font-weight: 700;
+        color: white;
+        font-family: 'Bungee', cursive;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .participant-list {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .list-group-item {
+        margin-bottom: 10px;
+        border-radius: 8px !important;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s;
+    }
+    
+    .list-group-item:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    .event-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .technical-badge {
+        background: linear-gradient(45deg, var(--secondary), #1e90ff);
+    }
+    
+    .cultural-badge {
+        background: linear-gradient(45deg, var(--primary), #ff6b81);
+    }
+    
+    .sports-badge {
+        background: linear-gradient(45deg, var(--accent), #2ecc71);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.25rem rgba(255, 165, 2, 0.25);
+        color: white;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .preview-image {
+        max-width: 100%;
+        max-height: 200px;
+        margin-top: 15px;
+        border-radius: 8px;
+        display: none;
+        border: 2px solid var(--accent);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .empty-state i {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .search-box {
+        margin-bottom: 20px;
+    }
+    
+    .modal-content {
+        background: var(--dark);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-close {
+        filter: invert(1);
+    }
+    
+    .nav-tabs {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-tabs .nav-link {
+        color: rgba(255, 255, 255, 0.7) !important;
+        border: none;
+        position: relative;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: white !important;
+        background: transparent;
+    }
+    
+    .nav-tabs .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--accent);
+        border-radius: 3px 3px 0 0;
+    }
+    
+    .tab-pane {
+        padding: 20px 0;
+    }
+    
+    /* Animation for buttons */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .btn-animate {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        
+        .card {
+            margin-bottom: 20px;
+        }
+        
+        .login-container, .register-container {
+            margin: 20px auto;
+            padding: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+<!-- Update the navigation bar section -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-calendar-alt me-2"></i>EventHub
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto" id="authLinks">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="loginLink">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="registerLink">Register</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav" id="userLinks">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="dashboardLink">Dashboard</a>
+                </li>
+                <li class="nav-item" id="myEventsNavItem">
+                    <a class="nav-link" href="#" id="myEventsLink">My Events</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logoutLink">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Main Content Area -->
+    <div class="container mt-4" id="mainContent">
+        <!-- Login Form -->
+        <div class="login-container hidden" id="loginSection">
+            <h2 class="text-center mb-4">Login</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loginRole" class="form-label">Role</label>
+                    <select class="form-select" id="loginRole" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="register-container hidden" id="registerSection">
+            <h2 class="text-center mb-4">Register</h2>
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="registerName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="registerName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="registerPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div class="hidden" id="adminDashboard">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+                <p class="text-muted">Manage events and participants</p>
+            </div>
+
+            <ul class="nav nav-tabs" id="adminTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-tab="adminEvents">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="adminParticipants">Participants</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-tab="addEvent">Add Event</a>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+                <!-- Admin Events Tab -->
+                <div class="tab-pane active" id="adminEventsTab">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <select class="form-select" id="adminEventFilter">
+                                <option value="all">All Categories</option>
+                                <option value="technical">Technical</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="sports">Sports</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="adminEventSearch" placeholder="Search events...">
+                        </div>
+                    </div>
+                    <div class="row" id="adminEventsList">
+                        <!-- Events will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Admin Participants Tab -->
+                <div class="tab-pane" id="adminParticipantsTab">
+                    <div class="mb-3">
+                        <select class="form-select" id="participantEventFilter">
+                            <option value="">Select an event to view participants</option>
+                            <!-- Events will be populated here -->
+                        </select>
+                    </div>
+                    <div class="participant-list" id="participantsList">
+                        <!-- Participants will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Add Event Tab -->
+                <div class="tab-pane" id="addEventTab">
+                    <form id="addEventForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="eventName" class="form-label">Event Name</label>
+                            <input type="text" class="form-control" id="eventName" name="event_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventCategory" class="form-label">Category</label>
+                            <select class="form-select" id="eventCategory" name="category" required>
+                                <option value="technical">Technical</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="sports">Sports</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="eventDescription" name="event_description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventRules" class="form-label">Rules</label>
+                            <textarea class="form-control" id="eventRules" name="rules" rows="3" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="eventDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="eventDate" name="event_date" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="eventTime" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="eventTime" name="event_time" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventVenue" class="form-label">Venue</label>
+                            <input type="text" class="form-control" id="eventVenue" name="venue" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="eventImage" class="form-label">Event Image</label>
+                            <input type="file" class="form-control" id="eventImage" name="event_image" accept="image/*">
+                            <img id="imagePreview" class="preview-image" alt="Image preview">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Event</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Dashboard -->
+        <div class="hidden" id="userDashboard">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-calendar me-2"></i>Events Dashboard</h2>
+                <p class="text-muted">Browse and register for events</p>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <select class="form-select" id="eventFilter">
+                        <option value="all">All Categories</option>
+                        <option value="technical">Technical</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="sports">Sports</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="eventSearch" placeholder="Search events...">
+                </div>
+            </div>
+
+            <div class="row" id="eventsList">
+                <!-- Events will be loaded here -->
+            </div>
+        </div>
+
+        <!-- My Events Dashboard -->
+        <div class="hidden" id="myEventsDashboard">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-calendar-check me-2"></i>My Registered Events</h2>
+                <p class="text-muted">Events you've registered for</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control mb-3" id="myEventsSearch" placeholder="Search my events...">
+                </div>
+            </div>
+
+            <div class="row" id="myEventsList">
+                <!-- User's registered events will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="modal fade" id="eventModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalTitle">Event Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="eventModalBody">
+                    <!-- Event details will be loaded here -->
+                </div>
+                <div class="modal-footer" id="eventModalFooter">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div class="modal fade" id="editEventModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEventForm">
+                        <input type="hidden" id="editEventId">
+                        <div class="mb-3">
+                            <label for="editEventName" class="form-label">Event Name</label>
+                            <input type="text" class="form-control" id="editEventName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEventCategory" class="form-label">Category</label>
+                            <select class="form-select" id="editEventCategory" required>
+                                <option value="technical">Technical</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="sports">Sports</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEventDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editEventDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEventRules" class="form-label">Rules</label>
+                            <textarea class="form-control" id="editEventRules" rows="3" required></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editEventDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="editEventDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editEventTime" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="editEventTime" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEventVenue" class="form-label">Venue</label>
+                            <input type="text" class="form-control" id="editEventVenue" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEventImage" class="form-label">Event Image</label>
+                            <input type="file" class="form-control" id="editEventImage" accept="image/*">
+                            <img id="editImagePreview" class="preview-image" alt="Image preview">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveEventChanges">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentUser = null;
+        let token = null;
+
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const registerSection = document.getElementById('registerSection');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const userDashboard = document.getElementById('userDashboard');
+        const myEventsDashboard = document.getElementById('myEventsDashboard');
+        const authLinks = document.getElementById('authLinks');
+        const userLinks = document.getElementById('userLinks');
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const dashboardLink = document.getElementById('dashboardLink');
+        const myEventsLink = document.getElementById('myEventsLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const addEventForm = document.getElementById('addEventForm');
+        const adminEventsList = document.getElementById('adminEventsList');
+        const eventsList = document.getElementById('eventsList');
+        const myEventsList = document.getElementById('myEventsList');
+        const participantEventFilter = document.getElementById('participantEventFilter');
+        const participantsList = document.getElementById('participantsList');
+        const eventFilter = document.getElementById('eventFilter');
+        const adminEventFilter = document.getElementById('adminEventFilter');
+        const eventSearch = document.getElementById('eventSearch');
+        const adminEventSearch = document.getElementById('adminEventSearch');
+        const myEventsSearch = document.getElementById('myEventsSearch');
+        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        const editEventModal = new bootstrap.Modal(document.getElementById('editEventModal'));
+        const imagePreview = document.getElementById('imagePreview');
+        const editImagePreview = document.getElementById('editImagePreview');
+        const eventImageInput = document.getElementById('eventImage');
+        const editEventImageInput = document.getElementById('editEventImage');
+
+        // Event Listeners
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('login');
+        });
+
+        registerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('register');
+        });
+
+        dashboardLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentUser.role === 'admin') {
+                showSection('adminDashboard');
+                loadAdminEvents();
+            } else {
+                showSection('userDashboard');
+                loadEvents();
+            }
+        });
+
+        myEventsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection('myEvents');
+            loadMyEvents();
+        });
+
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('loginRole').value;
+            login(email, password, role);
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            register(name, email, password);
+        });
+
+        addEventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addEvent();
+        });
+
+        eventFilter.addEventListener('change', () => {
+            loadEvents();
+        });
+
+        adminEventFilter.addEventListener('change', () => {
+            loadAdminEvents();
+        });
+
+        participantEventFilter.addEventListener('change', () => {
+            loadParticipants();
+        });
+
+        eventSearch.addEventListener('input', () => {
+            filterEvents();
+        });
+
+        adminEventSearch.addEventListener('input', () => {
+            filterAdminEvents();
+        });
+
+        myEventsSearch.addEventListener('input', () => {
+            filterMyEvents();
+        });
+
+        document.getElementById('saveEventChanges').addEventListener('click', () => {
+            updateEvent();
+        });
+
+        eventImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        editEventImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    editImagePreview.src = event.target.result;
+                    editImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Tab switching for admin dashboard
+        document.querySelectorAll('[data-tab]').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabId = this.getAttribute('data-tab') + 'Tab';
+                
+                // Hide all tabs
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('active');
+                });
+                
+                // Show selected tab
+                document.getElementById(tabId).classList.add('active');
+                
+                // Update active tab link
+                document.querySelectorAll('[data-tab]').forEach(tabLink => {
+                    tabLink.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Load data if needed
+                if (tabId === 'adminParticipantsTab') {
+                    loadEventsForParticipantsFilter();
+                }
+            });
+        });
+
+        // Functions
+        function showSection(section) {
+            // Hide all sections
+            loginSection.classList.add('hidden');
+            registerSection.classList.add('hidden');
+            adminDashboard.classList.add('hidden');
+            userDashboard.classList.add('hidden');
+            myEventsDashboard.classList.add('hidden');
+            
+            // Show selected section
+            switch(section) {
+                case 'login':
+                    loginSection.classList.remove('hidden');
+                    break;
+                case 'register':
+                    registerSection.classList.remove('hidden');
+                    break;
+                case 'adminDashboard':
+                    adminDashboard.classList.remove('hidden');
+                    break;
+                case 'userDashboard':
+                    userDashboard.classList.remove('hidden');
+                    break;
+                case 'myEvents':
+                    myEventsDashboard.classList.remove('hidden');
+                    break;
+            }
+        }
+
+// Update the updateUIForAuth function
+function updateUIForAuth() {
+    if (currentUser) {
+        authLinks.classList.add('hidden');
+        userLinks.classList.remove('hidden');
+        
+        // Hide "My Events" for admin
+        const myEventsNavItem = document.getElementById('myEventsNavItem');
+        if (currentUser.role === 'admin') {
+            myEventsNavItem.classList.add('hidden');
+            showSection('adminDashboard');
+            loadAdminEvents();
+        } else {
+            myEventsNavItem.classList.remove('hidden');
+            showSection('userDashboard');
+            loadEvents();
+        }
+    } else {
+        authLinks.classList.remove('hidden');
+        userLinks.classList.add('hidden');
+        showSection('login');
+    }
+}
+        function login(email, password, role) {
+            fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    role: role
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                token = data.token;
+                currentUser = {
+                    id: data.id,
+                    role: data.role
+                };
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(currentUser));
+                updateUIForAuth();
+            })
+            .catch(error => {
+                alert(error.error || 'Login failed');
+            });
+        }
+
+        function register(name, email, password) {
+            fetch('http://localhost:5000/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_name: name,
+                    user_email: email,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Registration successful! Please login.');
+                showSection('login');
+            })
+            .catch(error => {
+                alert(error.error || 'Registration failed');
+            });
+        }
+
+        function logout() {
+            currentUser = null;
+            token = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            updateUIForAuth();
+        }
+
+        function loadEvents() {
+            const category = eventFilter.value === 'all' ? '' : eventFilter.value;
+            
+            fetch('http://localhost:5000/user/view-events', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load events');
+                }
+                return response.json();
+            })
+            .then(data => {
+                eventsList.innerHTML = '';
+                
+                // Filter events by category if needed
+                let filteredEvents = data.events;
+                if (category) {
+                    filteredEvents = data.events.filter(event => event.category === category);
+                }
+                
+                if (filteredEvents.length === 0) {
+                    eventsList.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>No events found</h3>
+                                <p>There are currently no events available in this category.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredEvents.forEach(event => {
+                    const eventCard = createEventCard(event, true);
+                    eventsList.appendChild(eventCard);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                eventsList.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger">Failed to load events. Please try again later.</div>
+                    </div>
+                `;
+            });
+        }
+
+function loadMyEvents() {
+    fetch('http://localhost:5000/user/my-events', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to load your events');
+        }
+        return response.json();
+    })
+    .then(data => {
+        myEventsList.innerHTML = '';
+        
+        if (!data.registered_events || data.registered_events.length === 0) {
+            myEventsList.innerHTML = `
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-plus"></i>
+                        <h3>No registered events</h3>
+                        <p>You haven't registered for any events yet. Browse events to get started!</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        data.registered_events.forEach(event => {
+            const eventCard = createEventCard(event, true, true); // Note the true for isMyEvents
+            myEventsList.appendChild(eventCard);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        myEventsList.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">Failed to load your events. Please try again later.</div>
+            </div>
+        `;
+    });
+}
+        function loadAdminEvents() {
+            const category = adminEventFilter.value === 'all' ? '' : adminEventFilter.value;
+            
+            fetch('http://localhost:5000/admin/view-all-events', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load events');
+                }
+                return response.json();
+            })
+            .then(data => {
+                adminEventsList.innerHTML = '';
+                
+                // Filter events by category if needed
+                let filteredEvents = data.events;
+                if (category) {
+                    filteredEvents = data.events.filter(event => event.category === category);
+                }
+                
+                if (filteredEvents.length === 0) {
+                    adminEventsList.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>No events found</h3>
+                                <p>There are currently no events in this category.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredEvents.forEach(event => {
+                    const eventCard = createEventCard(event, false);
+                    adminEventsList.appendChild(eventCard);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                adminEventsList.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger">Failed to load events. Please try again later.</div>
+                    </div>
+                `;
+            });
+        }
+
+ function createEventCard(event, isUserView, isMyEvents = false) {
+    const col = document.createElement('div');
+    col.className = 'col-md-4';
+    
+    const card = document.createElement('div');
+    card.className = 'card h-100';
+    
+    // Event image - use uploaded image if available, otherwise placeholder
+    const img = document.createElement('img');
+    img.className = 'card-img-top event-image';
+    img.alt = event.event_name;
+    
+    if (event.image_path) {
+        img.src = `http://localhost:5000/static${event.image_path}`;
+    } else {
+        img.src = `https://source.unsplash.com/random/300x200/?${event.category}`;
+    }
+    
+    // Category badge
+    const badge = document.createElement('span');
+    badge.className = `event-badge ${event.category}-badge`;
+    badge.textContent = event.category.charAt(0).toUpperCase() + event.category.slice(1);
+    
+    const cardBody = document.createElement('div');
+    cardBody.className = 'card-body d-flex flex-column';
+    
+    const title = document.createElement('h5');
+    title.className = 'card-title';
+    title.textContent = event.event_name;
+    
+    const category = document.createElement('p');
+    category.className = 'card-text text-muted';
+    category.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i>${event.venue}`;
+    
+    const date = document.createElement('p');
+    date.className = 'card-text';
+    date.innerHTML = `<i class="far fa-calendar-alt me-2"></i>${event.event_date} at ${event.event_time}`;
+    
+    const viewBtn = document.createElement('button');
+    viewBtn.className = 'btn btn-primary me-2 mt-auto';
+    viewBtn.innerHTML = '<i class="far fa-eye me-1"></i> View Details';
+    viewBtn.addEventListener('click', () => showEventDetails(event));
+    
+    cardBody.appendChild(title);
+    cardBody.appendChild(category);
+    cardBody.appendChild(date);
+    cardBody.appendChild(viewBtn);
+    
+    if (isUserView && !isMyEvents) {
+        const registerBtn = document.createElement('button');
+        registerBtn.className = 'btn btn-success mt-2';
+        registerBtn.innerHTML = '<i class="fas fa-user-plus me-1"></i> Register';
+        registerBtn.addEventListener('click', () => registerForEvent(event.event_id));
+        cardBody.appendChild(registerBtn);
+    } else if (!isUserView) {
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'd-flex mt-auto';
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-warning me-2';
+        editBtn.innerHTML = '<i class="fas fa-edit me-1"></i> Edit';
+        editBtn.addEventListener('click', () => showEditEventForm(event));
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger';
+        deleteBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i> Delete';
+        deleteBtn.addEventListener('click', () => deleteEvent(event.event_id));
+        
+        btnGroup.appendChild(editBtn);
+        btnGroup.appendChild(deleteBtn);
+        cardBody.appendChild(btnGroup);
+    }
+    
+    card.appendChild(img);
+    card.appendChild(badge);
+    card.appendChild(cardBody);
+    col.appendChild(card);
+    
+    return col;
+}
+
+        function showEventDetails(event) {
+            document.getElementById('eventModalTitle').textContent = event.event_name;
+            
+            const modalBody = document.getElementById('eventModalBody');
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${event.image_path ? `http://localhost:5000/static/${event.image_path}` : `https://source.unsplash.com/random/600x400/?${event.category},${event.event_name}`}" 
+                             class="img-fluid rounded mb-3" alt="${event.event_name}">
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-tag me-2"></i>Category:</strong> ${event.category}</p>
+                        <p><strong><i class="far fa-calendar-alt me-2"></i>Date & Time:</strong> ${event.event_date} at ${event.event_time}</p>
+                        <p><strong><i class="fas fa-map-marker-alt me-2"></i>Venue:</strong> ${event.venue}</p>
+                        <h5><i class="fas fa-align-left me-2"></i>Description</h5>
+                        <p>${event.event_description}</p>
+                        <h5><i class="fas fa-list-ol me-2"></i>Rules</h5>
+                        <p>${event.rules.replace(/\n/g, '<br>')}</p>
+                    </div>
+                </div>
+            `;
+            
+            const modalFooter = document.getElementById('eventModalFooter');
+            modalFooter.innerHTML = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                ${currentUser.role === 'user' ? 
+                    `<button type="button" class="btn btn-success" id="modalRegisterBtn">
+                        <i class="fas fa-user-plus me-1"></i> Register
+                    </button>` : ''
+                }
+            `;
+            
+            if (currentUser.role === 'user') {
+                document.getElementById('modalRegisterBtn').addEventListener('click', () => {
+                    registerForEvent(event.event_id);
+                    eventModal.hide();
+                });
+            }
+            
+            eventModal.show();
+        }
+
+        function registerForEvent(eventId) {
+            fetch('http://localhost:5000/user/register-event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    event_id: eventId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Successfully registered for the event!');
+                loadEvents();
+                loadMyEvents();
+            })
+            .catch(error => {
+                alert(error.error || 'Registration failed');
+            });
+        }
+
+        function addEvent() {
+            const formData = new FormData(document.getElementById('addEventForm'));
+            
+            fetch('http://localhost:5000/admin/add-event', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type header - let the browser set it
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Event added successfully!');
+                addEventForm.reset();
+                imagePreview.style.display = 'none';
+                loadAdminEvents();
+                // Switch to events tab
+                document.querySelector('[data-tab="adminEvents"]').click();
+            })
+            .catch(error => {
+                alert(error.error || 'Failed to add event');
+            });
+        }
+
+        function showEditEventForm(event) {
+            document.getElementById('editEventId').value = event.event_id;
+            document.getElementById('editEventName').value = event.event_name;
+            document.getElementById('editEventCategory').value = event.category;
+            document.getElementById('editEventDescription').value = event.event_description;
+            document.getElementById('editEventRules').value = event.rules;
+            document.getElementById('editEventDate').value = event.event_date;
+            document.getElementById('editEventTime').value = event.event_time;
+            document.getElementById('editEventVenue').value = event.venue;
+            
+            // Set image preview if exists
+            if (event.image_path) {
+                editImagePreview.src = `http://localhost:5000/static/${event.image_path}`;
+                editImagePreview.style.display = 'block';
+            } else {
+                editImagePreview.style.display = 'none';
+            }
+            
+            editEventModal.show();
+        }
+
+        function updateEvent() {
+            const formData = new FormData();
+            formData.append('event_name', document.getElementById('editEventName').value);
+            formData.append('category', document.getElementById('editEventCategory').value);
+            formData.append('event_description', document.getElementById('editEventDescription').value);
+            formData.append('rules', document.getElementById('editEventRules').value);
+            formData.append('event_date', document.getElementById('editEventDate').value);
+            formData.append('event_time', document.getElementById('editEventTime').value);
+            formData.append('venue', document.getElementById('editEventVenue').value);
+            
+            const imageFile = document.getElementById('editEventImage').files[0];
+            if (imageFile) {
+                formData.append('event_image', imageFile);
+            }
+            
+            const eventId = document.getElementById('editEventId').value;
+            
+            fetch(`http://localhost:5000/admin/update-event/${eventId}`, {
+                method: 'PUT',
+                headers: {
+                    // Don't set Content-Type header - let the browser set it
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Event updated successfully!');
+                editEventModal.hide();
+                loadAdminEvents();
+            })
+            .catch(error => {
+                alert(error.error || 'Failed to update event');
+            });
+        }
+
+        function deleteEvent(eventId) {
+            if (!confirm('Are you sure you want to delete this event?')) return;
+            
+            fetch(`http://localhost:5000/admin/delete-event/${eventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Event deleted successfully!');
+                loadAdminEvents();
+            })
+            .catch(error => {
+                alert(error.error || 'Failed to delete event');
+            });
+        }
+
+        function loadEventsForParticipantsFilter() {
+            fetch('http://localhost:5000/admin/view-all-events', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load events');
+                }
+                return response.json();
+            })
+            .then(data => {
+                participantEventFilter.innerHTML = '<option value="">Select an event to view participants</option>';
+                
+                data.events.forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event.event_id;
+                    option.textContent = `${event.event_name} (${event.category})`;
+                    participantEventFilter.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                participantEventFilter.innerHTML = '<option value="">Failed to load events</option>';
+            });
+        }
+
+        function loadParticipants() {
+            const eventId = participantEventFilter.value;
+            if (!eventId) return;
+            
+            fetch('http://localhost:5000/admin/view-participants', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    event_id: eventId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load participants');
+                }
+                return response.json();
+            })
+            .then(data => {
+                participantsList.innerHTML = '';
+                
+                if (!data.participants || data.participants.length === 0) {
+                    participantsList.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> No participants for this event.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const selectedEvent = participantEventFilter.options[participantEventFilter.selectedIndex].text;
+                const heading = document.createElement('h5');
+                heading.className = 'mb-3';
+                heading.innerHTML = `<i class="fas fa-users me-2"></i>Participants for ${selectedEvent}`;
+                participantsList.appendChild(heading);
+                
+                const listGroup = document.createElement('div');
+                listGroup.className = 'list-group';
+                
+                data.participants.forEach(participant => {
+                    const participantItem = document.createElement('div');
+                    participantItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    
+                    const participantInfo = document.createElement('div');
+                    participantInfo.innerHTML = `
+                        <strong>${participant.user_name}</strong> 
+                        <span class="text-muted ms-2">(ID: ${participant.user_id})</span>
+                    `;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-sm btn-danger';
+                    deleteBtn.innerHTML = '<i class="fas fa-user-minus me-1"></i> Remove';
+                    deleteBtn.addEventListener('click', () => removeParticipant(participant.user_id, eventId));
+                    
+                    participantItem.appendChild(participantInfo);
+                    participantItem.appendChild(deleteBtn);
+                    listGroup.appendChild(participantItem);
+                });
+                
+                participantsList.appendChild(listGroup);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                participantsList.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Failed to load participants.
+                    </div>
+                `;
+            });
+        }
+
+        function removeParticipant(userId, eventId) {
+            if (!confirm('Are you sure you want to remove this participant?')) return;
+            
+            fetch('http://localhost:5000/admin/delete-participant', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    event_id: eventId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Participant removed successfully!');
+                loadParticipants();
+            })
+            .catch(error => {
+                alert(error.error || 'Failed to remove participant');
+            });
+        }
+
+        function filterEvents() {
+            const searchTerm = eventSearch.value.toLowerCase();
+            const cards = eventsList.querySelectorAll('.col-md-4');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterAdminEvents() {
+            const searchTerm = adminEventSearch.value.toLowerCase();
+            const cards = adminEventsList.querySelectorAll('.col-md-4');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterMyEvents() {
+            const searchTerm = myEventsSearch.value.toLowerCase();
+            const cards = myEventsList.querySelectorAll('.col-md-4');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Check for existing session on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('token');
+            const savedUser = localStorage.getItem('user');
+            
+            if (savedToken && savedUser) {
+                token = savedToken;
+                currentUser = JSON.parse(savedUser);
+                updateUIForAuth();
+            } else {
+                showSection('login');
+            }
+        });
+    </script>
+</body>
+</html>
