@@ -38,6 +38,9 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return render_template('event.html')
+@app.route('/index')
+def index_page():
+    return render_template('index.html')
 
 
 # Temporary endpoint to create a default admin (remove after use)
