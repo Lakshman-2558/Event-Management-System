@@ -29,6 +29,7 @@ googleapis-common-protos==1.67.0
 greenlet==3.2.2
 grpcio==1.70.0
 grpcio-status==1.62.3
+gunicorn==23.0.0
 idna==3.10
 importlib_metadata==7.2.1
 itsdangerous==2.2.0
