@@ -8,42 +8,44 @@ from flask_bcrypt import Bcrypt
 import os
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template
-app = Flask(__name__, static_url_path='/static',static_folder='static')
 
-# Configuration
-app.config['MYSQL_USER'] = "admin"
-app.config['MYSQL_PASSWORD'] = "eventmanagementsystem"
-app.config['MYSQL_DB'] = "ems"
-app.config['MYSQL_HOST'] = "ems.c1sg28iou80l.us-east-2.rds.amazonaws.com"
-app.config['JWT_SECRET_KEY'] = 'your-very-secure-secret-key'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+# Initialize Flask app
+app = Flask(__name__, static_url_path='/static', static_folder='static')
+
+# Configuration - Using environment variables for security
+app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'admin')
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'eventmanagementsystem')
+app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'ems')
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'ems.c1sg28iou80l.us-east-2.rds.amazonaws.com')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-very-secure-secret-key')
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'static/uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
 
 # Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Initialize extensions
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-CORS(app)
+CORS(app)  # Enable CORS for all routes
 
 def allowed_file(filename):
+    """Check if the file has an allowed extension"""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-
-
-app = Flask(__name__)
-
+# Homepage routes
 @app.route('/')
 def home():
     return render_template('event.html')
+
 @app.route('/index')
 def index_page():
     return render_template('index.html')
 
-
-# Temporary endpoint to create a default admin (remove after use)
+# Admin setup endpoint (should be removed after initial setup)
 @app.route('/setup-admin', methods=['POST'])
 def setup_admin():
     try:
@@ -83,6 +85,7 @@ def setup_admin():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Authentication endpoints
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -166,6 +169,7 @@ def register_user():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Admin event management endpoints
 @app.route('/admin/add-event', methods=['POST'])
 @jwt_required()
 def add_event():
@@ -192,14 +196,13 @@ def add_event():
 
         # Handle file upload
         image_path = None
-        # In the add_event endpoint, modify the image handling:
         if 'event_image' in request.files:
             file = request.files['event_image']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-            image_path = os.path.join('/uploads', filename)  # Store relative path
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                image_path = os.path.join('/uploads', filename)  # Store relative path
 
         cursor = mysql.connection.cursor()
         cursor.execute("""
@@ -318,6 +321,7 @@ def delete_event(event_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Admin view endpoints
 @app.route('/admin/view-all-events', methods=['GET'])
 @jwt_required()
 def view_all_events():
@@ -337,8 +341,6 @@ def view_all_events():
 
         events = []
         for row in rows:
-         # In all endpoints that return event data, ensure time is formatted consistently:
-# For example in view_all_events:
             events.append({
                 "event_id": row[0],
                 "event_name": row[1],
@@ -446,8 +448,6 @@ def view_events_by_category():
 
         events = []
         for row in rows:
-           # In all endpoints that return event data, ensure time is formatted consistently:
-# For example in view_all_events:
             events.append({
                 "event_id": row[0],
                 "event_name": row[1],
@@ -467,6 +467,7 @@ def view_events_by_category():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# User endpoints
 @app.route('/user/view-events', methods=['GET'])
 @jwt_required()
 def user_view_events():
@@ -486,8 +487,6 @@ def user_view_events():
 
         events = []
         for row in rows:
-            # In all endpoints that return event data, ensure time is formatted consistently:
-# For example in view_all_events:
             events.append({
                 "event_id": row[0],
                 "event_name": row[1],
@@ -646,4 +645,5 @@ def user_events_by_category():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+ 
+    app.run(debug=os.getenv('FLASK_DEBUG', 'False').lower() == 'true')
