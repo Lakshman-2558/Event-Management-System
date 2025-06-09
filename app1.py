@@ -11,10 +11,10 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__, static_url_path='/static',static_folder='static')
 
 # Configuration
-app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = "root"
+app.config['MYSQL_USER'] = "admin"
+app.config['MYSQL_PASSWORD'] = "eventmanagementsystem"
 app.config['MYSQL_DB'] = "ems"
-app.config['MYSQL_HOST'] = "localhost"
+app.config['MYSQL_HOST'] = "ems.c1sg28iou80l.us-east-2.rds.amazonaws.com"
 app.config['JWT_SECRET_KEY'] = 'your-very-secure-secret-key'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
